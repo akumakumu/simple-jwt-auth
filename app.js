@@ -1,11 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const dotenv = require('dotenv');
 
 const authRoutes = require('./routes/authRoutes');
 const { requireAuth, checkUser } = require('./middleware/authMiddleware');
 
 const app = express();
+
+// dotEnv
+dotenv.config();
 
 // middleware
 app.use(express.static('public'));
@@ -18,8 +22,9 @@ app.use(cookieParser());
 app.set('view engine', 'ejs');
 
 // database connection
-const dbURI = "mongodb+srv://yy:doubleyou@dmarket.6nhrdjz.mongodb.net/yy_auth";
-mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true})
+// Add database URI on .env file
+// dbURI = YourDatabaseURI
+mongoose.connect(process.env.dbURI, { useNewUrlParser: true, useUnifiedTopology: true})
 .then((result) => app.listen(3000))
 .catch((err) => console.log(err));
 
