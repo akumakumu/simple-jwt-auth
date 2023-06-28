@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 
 const authRoutes = require('./routes/authRoutes');
-const { requireAuth } = require('./middleware/authMiddleware');
+const { requireAuth, checkUser } = require('./middleware/authMiddleware');
 
 const app = express();
 
@@ -13,8 +13,6 @@ app.use(express.static('public'));
 app.use(express.json());
 // cookie parser
 app.use(cookieParser());
-// Authentication
-app.use(authRoutes);
 
 // view engine
 app.set('view engine', 'ejs');
@@ -26,22 +24,9 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true})
 .catch((err) => console.log(err));
 
 // routes
+app.get('*', checkUser);
 app.get('/', (req, res) => res.render('home'));
 app.get('/smoothies', requireAuth, (req, res) => res.render('smoothies'));
 
-// cookies
-app.get('/set-cookies', (req, res) => {
-  //res.setHeader('Set-Cookie', 'newUser=true');
-  res.cookie('newUser', false);
-  res.cookie('isEmployee', true, { maxAge: 1000 * 60 * 24, httpOnly: true }); // Max Cookie Age 1 Day 1000ms x 60 x 24, secure: true = HTTPS
-
-  res.send('you got the cookies!');
-})
-
-app.get('/read-cookies', (req, res) => {
-  const cookies = req.cookies;
-  //console.log(cookies)
-  console.log(cookies.newUser);
-
-  res.json(cookies);
-})
+// Authentication
+app.use(authRoutes);
