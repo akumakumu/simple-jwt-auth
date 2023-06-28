@@ -12,6 +12,8 @@ app.use(express.static('public'));
 app.use(express.json());
 // cookie parser
 app.use(cookieParser());
+// Authentication
+app.use(authRoutes);
 
 // view engine
 app.set('view engine', 'ejs');
@@ -25,8 +27,6 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true})
 // routes
 app.get('/', (req, res) => res.render('home'));
 app.get('/smoothies', (req, res) => res.render('smoothies'));
-
-app.use(authRoutes);
 
 // cookies
 app.get('/set-cookies', (req, res) => {
